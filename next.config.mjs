@@ -15,6 +15,20 @@ const nextConfig = {
     NEXT_PUBLIC_CAL_USERNAME: process.env.NEXT_PUBLIC_CAL_USERNAME,
   },
 
+  // Allow Next.js Image Optimization to proxy images hosted on Supabase storage.
+  // Requests to /_next/image?url=... will otherwise return 400 if the remote
+  // domain isn't allowed. We permit any subdomain of supabase.co here so that
+  // storage public URLs like <project>.supabase.co/storage/v2/object/.. work.
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
   webpack(config) {
     // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find(rule =>
