@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/libs/supabase'
+import { requireSupabaseAdmin } from '@/libs/supabase'
 
 // GET — گرفتن همه کارها
 export async function GET() {
-  const { data, error } = await supabaseAdmin
+  let admin
+  try {
+    admin = requireSupabaseAdmin()
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 })
+  }
+
+  const { data, error } = await admin
     .from('works')
     .select('*')
     .order('sort_order', { ascending: true })
@@ -14,7 +21,14 @@ export async function GET() {
 // POST — اضافه کردن کار جدید
 export async function POST(req: NextRequest) {
   const body = await req.json()
-  const { data, error } = await supabaseAdmin
+  let admin
+  try {
+    admin = requireSupabaseAdmin()
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 })
+  }
+
+  const { data, error } = await admin
     .from('works')
     .insert(body)
     .select()
@@ -27,7 +41,14 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const body = await req.json()
   const { id, ...rest } = body
-  const { data, error } = await supabaseAdmin
+  let admin
+  try {
+    admin = requireSupabaseAdmin()
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 })
+  }
+
+  const { data, error } = await admin
     .from('works')
     .update(rest)
     .eq('id', id)
@@ -40,7 +61,14 @@ export async function PUT(req: NextRequest) {
 // DELETE — حذف کار
 export async function DELETE(req: NextRequest) {
   const id = new URL(req.url).searchParams.get('id')
-  const { error } = await supabaseAdmin.from('works').delete().eq('id', id)
+  let admin
+  try {
+    admin = requireSupabaseAdmin()
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 })
+  }
+
+  const { error } = await admin.from('works').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
 }

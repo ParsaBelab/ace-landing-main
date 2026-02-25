@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/libs/supabase'
+import { requireSupabaseAdmin } from '@/libs/supabase'
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData()
@@ -10,13 +10,20 @@ export async function POST(req: NextRequest) {
   const name = `${Date.now()}.${ext}`
   const buffer = Buffer.from(await file.arrayBuffer())
 
-  const { data, error } = await supabaseAdmin.storage
+  let admin
+  try {
+    admin = requireSupabaseAdmin()
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 })
+  }
+
+  const { data, error } = await admin.storage
     .from('works-images')
     .upload(name, buffer, { contentType: file.type, cacheControl: '31536000' })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  const { data: url } = supabaseAdmin.storage
+  const { data: url } = admin.storage
     .from('works-images')
     .getPublicUrl(data.path)
 
