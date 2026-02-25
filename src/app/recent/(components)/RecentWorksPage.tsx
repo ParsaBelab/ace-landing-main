@@ -11,7 +11,7 @@ import { membersData } from '@libs/data/members';
 import cn from '@libs/utils/cn';
 import { useTranslations } from 'next-intl';
 import React from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/libs/supabase';
 
 const RecentWorksPage = () => {
   const t = useTranslations('recentWorks');

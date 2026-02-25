@@ -14,7 +14,7 @@ import { useRouter } from 'next-nprogress-bar';
 import React from 'react';
 import type { RecentWorkCardProps } from './RecentWorkCard';
 import RecentWorkCard from './RecentWorkCard';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/libs/supabase';
 
 const LandingRecentWorks = () => {
   const t = useTranslations('recentWorks');

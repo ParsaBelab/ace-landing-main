@@ -1,14 +1,23 @@
 import { createClient } from '@supabase/supabase-js'
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const serviceRole = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-// برای خواندن داده در سایت (فرانت‌اند)
+if (!url) {
+  throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL')
+}
+
+if (!anon) {
+  throw new Error('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY')
+}
+
+// ✅ Client-side (safe for frontend)
 export const supabase = createClient(url, anon)
 
-// برای نوشتن داده (فقط در API routes)
-export const supabaseAdmin = createClient(
-  url,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { autoRefreshToken: false, persistSession: false } }
-)
+// ✅ Server-side only (API routes / server actions)
+export const supabaseAdmin = serviceRole
+  ? createClient(url, serviceRole, {
+      auth: { autoRefreshToken: false, persistSession: false }
+    })
+  : null

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase'
+import { supabaseAdmin } from '@/libs/supabase'
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData()
